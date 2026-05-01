@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movie Planet Studio — Help Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0b;
+    --bg2: #111114;
+    --bg3: #18181d;
+    --surface: #1e1e24;
+    --surface2: #252530;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --amber: #e8a820;
+    --amber-dim: rgba(232,168,32,0.15);
+    --amber-glow: rgba(232,168,32,0.08);
+    --text: #e8e6df;
+    --text2: #9a9890;
+    --text3: #5e5c56;
+    --red: #e85020;
+    --green: #22c97a;
+    --blue: #4a9eff;
+    --sidebar-w: 280px;
+    --header-h: 60px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-weight: 400;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── FILM GRAIN ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    background-size: 180px;
+    opacity: 0.028;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: var(--sidebar-w);
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface2) transparent;
+  }
+
+  .sidebar-header {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .logo-mark {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: var(--amber);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .logo-icon svg { width: 16px; height: 16px; fill: #0a0a0b; }
+
+  .logo-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 15px;
+    line-height: 1.2;
+    color: var(--text);
+  }
+
+  .logo-name span { display: block; font-size: 10px; font-family: 'Syne', sans-serif; color: var(--text3); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1px; }
+
+  .version-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--amber);
+    background: var(--amber-dim);
+    border: 1px solid rgba(232,168,32,0.3);
+    padding: 2px 8px;
+    border-radius: 100px;
+    margin-top: 10px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Search */
+  .search-wrap {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 8px 12px;
+    transition: border-color 0.2s;
+  }
+
+  .search-box:focus-within { border-color: var(--amber); }
+
+  .search-box svg { width: 13px; height: 13px; flex-shrink: 0; opacity: 0.4; }
+
+  .search-box input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    width: 100%;
+  }
+
+  .search-box input::placeholder { color: var(--text3); }
+
+  /* Nav */
+  .nav { padding: 12px 0 24px; flex: 1; }
+
+  .nav-section { margin-bottom: 4px; }
+
+  .nav-section-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-weight: 600;
+    padding: 8px 20px 4px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 20px;
+    font-size: 13px;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    position: relative;
+  }
+
+  .nav-item:hover { color: var(--text); background: var(--amber-glow); }
+
+  .nav-item.active {
+    color: var(--amber);
+    border-left-color: var(--amber);
+    background: var(--amber-dim);
+    font-weight: 500;
+  }
+
+  .nav-item .nav-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    min-width: 18px;
+  }
+
+  .nav-item.active .nav-num { color: var(--amber); opacity: 0.7; }
+
+  .nav-sub { padding-left: 8px; }
+
+  .nav-sub .nav-item {
+    font-size: 12px;
+    padding: 5px 20px 5px 30px;
+    border-left: none;
+    color: var(--text3);
+  }
+
+  .nav-sub .nav-item:hover { color: var(--text2); }
+  .nav-sub .nav-item.active { color: var(--amber); background: none; }
+
+  /* ─── MAIN ─── */
+  .main {
+    margin-left: var(--sidebar-w);
+    min-height: 100vh;
+  }
+
+  /* ─── TOP BAR ─── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    height: var(--header-h);
+    background: rgba(10,10,11,0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    z-index: 50;
+  }
+
+  .topbar-breadcrumb {
+    font-size: 12px;
+    color: var(--text3);
+    font-family: 'DM Mono', monospace;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .topbar-breadcrumb span { color: var(--text2); }
+  .topbar-breadcrumb .sep { opacity: 0.4; }
+
+  .topbar-tags { display: flex; gap: 8px; }
+
+  .tag {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    padding: 3px 8px;
+    border-radius: 100px;
+    border: 1px solid var(--border2);
+    color: var(--text3);
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── CONTENT ─── */
+  .content {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 64px 48px 120px;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    margin-bottom: 80px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 20px;
+    letter-spacing: -0.01em;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--amber);
+  }
+
+  .hero-tagline {
+    font-size: 17px;
+    color: var(--text2);
+    max-width: 520px;
+    line-height: 1.65;
+    margin-bottom: 32px;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .hero-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .hero-card:hover {
+    border-color: var(--amber);
+    background: var(--amber-glow);
+    transform: translateY(-2px);
+  }
+
+  .hero-card-icon {
+    width: 28px; height: 28px;
+    background: var(--amber-dim);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  .hero-card-icon svg { width: 14px; height: 14px; fill: var(--amber); }
+
+  .hero-card-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+
+  .hero-card-sub {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+
+  /* ─── SECTIONS ─── */
+  .doc-section {
+    margin-bottom: 80px;
+    scroll-margin-top: 80px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 32px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--amber);
+    opacity: 0.7;
+    letter-spacing: 0.08em;
+  }
+
+  .section-icon {
+    width: 36px; height: 36px;
+    background: var(--amber-dim);
+    border: 1px solid rgba(232,168,32,0.25);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .section-icon svg { width: 16px; height: 16px; fill: var(--amber); }
+
+  .section-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: var(--text);
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  /* Sub-sections */
+  .subsection { margin-bottom: 48px; }
+
+  .subsection h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 14px;
+    letter-spacing: 0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .subsection h3::before {
+    content: '';
+    display: block;
+    width: 3px; height: 14px;
+    background: var(--amber);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 24px 0 10px;
+  }
+
+  p {
+    font-size: 14.5px;
+    color: var(--text2);
+    line-height: 1.75;
+    margin-bottom: 14px;
+  }
+
+  strong { color: var(--text); font-weight: 600; }
+
+  /* ─── TABLES ─── */
+  .table-wrap { overflow-x: auto; margin: 20px 0; border-radius: 10px; border: 1px solid var(--border); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead tr { background: var(--surface); }
+
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 10px 14px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+    vertical-align: top;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+  td strong { color: var(--text); }
+
+  /* ─── STEPS ─── */
+  .steps { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    transition: border-color 0.2s;
+  }
+
+  .step:hover { border-color: var(--border2); }
+
+  .step-num {
+    width: 24px; height: 24px;
+    background: var(--amber-dim);
+    border: 1px solid rgba(232,168,32,0.35);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--amber);
+    font-weight: 500;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-content { flex: 1; }
+  .step-content strong { font-size: 13px; display: block; margin-bottom: 3px; }
+  .step-content p { font-size: 13px; margin: 0; color: var(--text3); }
+
+  /* ─── CALLOUTS ─── */
+  .callout {
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 20px 0;
+    display: flex;
+    gap: 12px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .callout-tip {
+    background: rgba(232,168,32,0.08);
+    border: 1px solid rgba(232,168,32,0.25);
+  }
+
+  .callout-warn {
+    background: rgba(232,80,32,0.08);
+    border: 1px solid rgba(232,80,32,0.25);
+  }
+
+  .callout-info {
+    background: rgba(74,158,255,0.07);
+    border: 1px solid rgba(74,158,255,0.2);
+  }
+
+  .callout-icon { font-size: 15px; flex-shrink: 0; line-height: 1.5; }
+  .callout-body { color: var(--text2); }
+  .callout-body strong { color: var(--text); }
+
+  /* ─── KBD ─── */
+  kbd {
+    display: inline-flex;
+    align-items: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    padding: 2px 7px;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  /* ─── CODE ─── */
+  code {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 1px 6px;
+    color: var(--amber);
+  }
+
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    overflow-x: auto;
+    margin: 16px 0;
+  }
+
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+
+  /* ─── STATUS BADGES ─── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    padding: 3px 9px;
+    border-radius: 100px;
+    font-weight: 500;
+  }
+
+  .badge-green { background: rgba(34,201,122,0.12); color: var(--green); border: 1px solid rgba(34,201,122,0.3); }
+  .badge-blue  { background: rgba(74,158,255,0.12); color: var(--blue);  border: 1px solid rgba(74,158,255,0.3); }
+  .badge-red   { background: rgba(232,80,32,0.12);  color: var(--red);   border: 1px solid rgba(232,80,32,0.3); }
+  .badge-grey  { background: var(--surface); color: var(--text3); border: 1px solid var(--border2); }
+
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  /* ─── MODULE CARDS ─── */
+  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+
+  .mode-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    transition: all 0.2s;
+  }
+
+  .mode-card:hover { border-color: var(--border2); background: var(--bg3); }
+
+  .mode-card-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 5px;
+  }
+
+  .mode-card-desc { font-size: 12px; color: var(--text3); line-height: 1.5; margin: 0; }
+
+  /* ─── INTERFACE DIAGRAM ─── */
+  .interface-diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text2);
+    overflow-x: auto;
+  }
+
+  .interface-diagram .amber { color: var(--amber); }
+  .interface-diagram .dim { color: var(--text3); }
+
+  /* ─── TROUBLESHOOT ─── */
+  .trouble-item {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .trouble-q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: var(--surface);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    gap: 12px;
+    transition: background 0.15s;
+  }
+
+  .trouble-q:hover { background: var(--bg3); }
+  .trouble-q .arrow { color: var(--text3); font-size: 11px; transition: transform 0.2s; flex-shrink: 0; }
+  .trouble-q.open .arrow { transform: rotate(90deg); color: var(--amber); }
+  .trouble-q.open { color: var(--amber); }
+
+  .trouble-a {
+    display: none;
+    padding: 16px 18px;
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.7;
+    border-top: 1px solid var(--border);
+  }
+
+  .trouble-a.open { display: block; }
+
+  .trouble-a ol {
+    padding-left: 18px;
+    margin: 8px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  /* ─── SHORTCUTS TABLE ─── */
+  .shortcut-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 20px 0; }
+
+  .shortcut-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+  }
+
+  .shortcut-label { font-size: 12.5px; color: var(--text2); }
+
+  /* ─── PATHS ─── */
+  .path-list { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+
+  .path-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    gap: 16px;
+  }
+
+  .path-row-label { font-size: 12px; color: var(--text2); flex-shrink: 0; min-width: 140px; }
+  .path-row-val { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--amber); text-align: right; word-break: break-all; }
+
+  /* ─── STATUS DISPLAY ─── */
+  .status-grid { display: flex; gap: 12px; margin: 20px 0; flex-wrap: wrap; }
+
+  .status-card {
+    flex: 1; min-width: 150px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .status-card-icon { font-size: 22px; margin-bottom: 8px; }
+  .status-card-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .status-card-desc { font-size: 11px; color: var(--text3); }
+
+  /* ─── QUEUE STATES ─── */
+  .queue-states { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
+
+  .queue-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+
+  .queue-card-indicator { height: 4px; border-radius: 2px; margin-bottom: 10px; }
+  .q-pending { background: var(--text3); }
+  .q-processing { background: var(--blue); }
+  .q-done { background: var(--green); }
+  .q-failed { background: var(--red); }
+
+  .queue-card-label { font-size: 12px; font-weight: 600; color: var(--text); }
+  .queue-card-desc { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 14px;
+    color: var(--text3);
+  }
+
+  .footer-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  /* ─── HIDDEN / SEARCH ─── */
+  .hidden { display: none !important; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    :root { --sidebar-w: 0px; }
+    .sidebar { display: none; }
+    .content { padding: 40px 24px 80px; }
+    .hero-grid { grid-template-columns: repeat(2,1fr); }
+    .queue-states { grid-template-columns: repeat(2,1fr); }
+    .shortcut-grid { grid-template-columns: 1fr; }
+    .topbar { padding: 0 24px; }
+    .mode-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-mark">
+      <div class="logo-icon">
+        <svg viewBox="0 0 16 16"><path d="M2 3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H2zm0 1h1.5L5 6H3V4zm2.5 0H7l-1.5 2H4L4.5 4zm2.5 0h1.5L8 6H6.5L7 4zm2.5 0H11l-1 2H8.5L9.5 4zm2.5 0H14v2h-2L11.5 4zM3 7h10v4H3V7z"/></svg>
+      </div>
+      <div class="logo-name">Movie Planet Studio<span>Help Documentation</span></div>
+    </div>
+    <div class="version-badge">v1.0 · Windows</div>
+  </div>
+
+  <div class="search-wrap">
+    <div class="search-box">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
+      <input type="text" id="search-input" placeholder="Search docs…" autocomplete="off">
+    </div>
+  </div>
+
+  <nav class="nav" id="main-nav">
+    <div class="nav-section">
+      <div class="nav-section-label">Overview</div>
+      <a class="nav-item active" href="#getting-started">
+        <span class="nav-num">01</span> Getting Started
+      </a>
+      <a class="nav-item" href="#projects">
+        <span class="nav-num">02</span> Projects
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Modules</div>
+      <a class="nav-item" href="#text">
+        <span class="nav-num">03</span> Text Module
+      </a>
+      <div class="nav-sub">
+        <a class="nav-item" href="#text-editor">Text Editor</a>
+        <a class="nav-item" href="#prompt-builder">Prompt Builder</a>
+        <a class="nav-item" href="#cinematic-writer">Cinematic Writer</a>
+        <a class="nav-item" href="#lyric-writer">Lyric Writer</a>
+      </div>
+      <a class="nav-item" href="#image">
+        <span class="nav-num">04</span> Image Module
+      </a>
+      <div class="nav-sub">
+        <a class="nav-item" href="#gen-studio">Generation Studio</a>
+        <a class="nav-item" href="#virtual-tryon">Virtual Try-On</a>
+        <a class="nav-item" href="#inpaint">Editor (Inpaint)</a>
+      </div>
+      <a class="nav-item" href="#video">
+        <span class="nav-num">05</span> Video Module
+      </a>
+      <div class="nav-sub">
+        <a class="nav-item" href="#text-to-video">Text to Video</a>
+        <a class="nav-item" href="#image-to-video">Image to Video</a>
+        <a class="nav-item" href="#video-to-video">Video to Video</a>
+        <a class="nav-item" href="#lip-sync">Lip Sync</a>
+      </div>
+      <a class="nav-item" href="#audio">
+        <span class="nav-num">06</span> Audio Module
+      </a>
+      <div class="nav-sub">
+        <a class="nav-item" href="#voice-engine">Voice Engine</a>
+        <a class="nav-item" href="#music-engine">Music Engine</a>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Workspace</div>
+      <a class="nav-item" href="#render-queue">
+        <span class="nav-num">07</span> Render Queue
+      </a>
+      <a class="nav-item" href="#gallery">
+        <span class="nav-num">08</span> Gallery
+      </a>
+      <a class="nav-item" href="#presets">
+        <span class="nav-num">09</span> Presets
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Reference</div>
+      <a class="nav-item" href="#settings">
+        <span class="nav-num">10</span> Settings & API Keys
+      </a>
+      <a class="nav-item" href="#shortcuts">
+        <span class="nav-num">11</span> Keyboard Shortcuts
+      </a>
+      <a class="nav-item" href="#file-paths">
+        <span class="nav-num">12</span> File Storage & Paths
+      </a>
+      <a class="nav-item" href="#troubleshooting">
+        <span class="nav-num">13</span> Troubleshooting
+      </a>
+    </div>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <div class="topbar">
+    <div class="topbar-breadcrumb">
+      Movie Planet Studio <span class="sep">›</span> <span id="active-section">Getting Started</span>
+    </div>
+    <div class="topbar-tags">
+      <span class="tag">v1.0</span>
+      <span class="tag">Windows</span>
+    </div>
+  </div>
+
+  <div class="content" id="content">
+
+    <!-- HERO -->
+    <div class="hero" id="getting-started">
+      <div class="hero-eyebrow">Help Documentation · Version 1.0</div>
+      <h1>From Nothing<br>to <em>Cinema.</em></h1>
+      <p class="hero-tagline">Movie Planet Studio is an AI-powered creative desktop application for Windows. Text, image, video, and audio generation — unified in one workspace, powered by Google Gemini.</p>
+
+      <div class="hero-grid">
+        <a href="#text" class="hero-card">
+          <div class="hero-card-icon">
+            <svg viewBox="0 0 16 16"><path d="M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2zm2.5 5.5v-2h1v2h2v1h-2v2h-1v-2h-2v-1h2zm5-1h3v1h-3v-1zm0 2h3v1h-3v-1z"/></svg>
+          </div>
+          <div class="hero-card-label">Text</div>
+          <div class="hero-card-sub">5 creative modes</div>
+        </a>
+        <a href="#image" class="hero-card">
+          <div class="hero-card-icon">
+            <svg viewBox="0 0 16 16"><path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/><path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/></svg>
+          </div>
+          <div class="hero-card-label">Image</div>
+          <div class="hero-card-sub">3 workspaces</div>
+        </a>
+        <a href="#video" class="hero-card">
+          <div class="hero-card-icon">
+            <svg viewBox="0 0 16 16"><path d="M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z"/></svg>
+          </div>
+          <div class="hero-card-label">Video</div>
+          <div class="hero-card-sub">4 generation modes</div>
+        </a>
+        <a href="#audio" class="hero-card">
+          <div class="hero-card-icon">
+            <svg viewBox="0 0 16 16"><path d="M9 13c0 1.105-1.12 2-2.5 2S4 14.105 4 13s1.12-2 2.5-2 2.5.895 2.5 2z"/><path fill-rule="evenodd" d="M9 3v10H8V3h1z"/><path d="M8 2.82a1 1 0 0 1 .804-.98l3-.6A1 1 0 0 1 13 2.22V4L8 5V2.82z"/><path d="M13 13c0 1.105-1.12 2-2.5 2S8 14.105 8 13s1.12-2 2.5-2 2.5.895 2.5 2z"/></svg>
+          </div>
+          <div class="hero-card-label">Audio</div>
+          <div class="hero-card-sub">Voice + Music</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- GETTING STARTED CONTENT -->
+    <div class="doc-section">
+      <div class="subsection">
+        <h3>First Launch</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>Launch the application</strong>
+              <p>The backend server starts automatically — wait for the main window to appear.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>Enter your API Key</strong>
+              <p>Click the <strong>Settings</strong> icon (top-right of any module). Paste your Google Gemini API key and save. The status badge turns green when accepted.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>Create a Project</strong>
+              <p>From the Dashboard, click <strong>New Project</strong>, enter a name, and press Create.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <strong>Choose a Module</strong>
+              <p>Use the left navigation rail to switch between Text, Image, Video, and Audio.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Interface Overview</h3>
+        <div class="interface-diagram">
+<pre class="amber">┌─────────────────────────────────────────────────────────┐
+│  Left Navigation Rail (module icons)                    │
+├─────────────────┬───────────────────────────────────────┤
+│  Left Panel     │  Right Panel (Output Area)            │
+│  (Controls)     │                                       │
+│ <span class="amber">·</span> Mode Select   │ <span class="amber">·</span> Prompt Terminal                   │
+│ <span class="amber">·</span> Parameters    │ <span class="amber">·</span> Model / Aspect / Resolution bar   │
+│ <span class="amber">·</span> Uploads       │ <span class="amber">·</span> Generate Button                   │
+│                 │ <span class="amber">·</span> Results / Preview                 │
+└─────────────────┴───────────────────────────────────────┘</pre>
+        </div>
+        <p>The <strong>Output Header Bar</strong> (top-right) always shows: <code>Clear All</code> · <code>Presets</code> · <code>Gallery</code> · <code>Render Queue</code> · <code>Status Badge</code>.</p>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="doc-section" id="projects">
+      <div class="section-header">
+        <div class="section-num">02</div>
+        <div class="section-icon">
+          <svg viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v7a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>
+        </div>
+        <h2>Projects</h2>
+      </div>
+
+      <p>Projects save your entire workspace — all four modules, uploaded references, and generated outputs — into a single <code>.mps</code> file.</p>
+
+      <div class="subsection">
+        <h3>Creating a Project</h3>
+        <p>Go to <strong>Dashboard → New Project</strong> and enter a name, or press <kbd>Ctrl</kbd>+<kbd>N</kbd> from anywhere. Projects are saved to <code>Documents\Movie Planet Studio\Projects\</code>.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Opening a Project</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>How</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Dashboard</strong></td><td>Click a project card in the project list</td></tr>
+              <tr><td><strong>File menu</strong></td><td><kbd>Ctrl</kbd>+<kbd>O</kbd> — opens a native file picker for <code>.mps</code> files</td></tr>
+              <tr><td><strong>Drag & Drop</strong></td><td>Drag a <code>.mps</code> file onto the Dashboard</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Saving a Project</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Action</th><th>Shortcut</th><th>Behaviour</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Save</strong></td><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td>Saves to the current file</td></tr>
+              <tr><td><strong>Save As</strong></td><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd></td><td>Saves to a new location</td></tr>
+              <tr><td><strong>Auto-Save</strong></td><td>—</td><td>Silently saves every 60 seconds when there are unsaved changes (dirty-flag dot in title bar)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Project File Format (.mps)</h3>
+        <p>A <code>.mps</code> file is a ZIP archive containing <code>project_data.json</code> (all module settings) and an <code>assets/</code> folder (embedded reference images, videos, and audio). Maximum project size is <strong>500 MB</strong>.</p>
+        <div class="callout callout-tip">
+          <div class="callout-icon">💡</div>
+          <div class="callout-body">To rename or delete a project, hover its card on the Dashboard and use the <strong>⋯ menu</strong>.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEXT MODULE -->
+    <div class="doc-section" id="text">
+      <div class="section-header">
+        <div class="section-num">03</div>
+        <div class="section-icon">
+          <svg viewBox="0 0 16 16"><path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm.5 3a.5.5 0 0 0 0 1h11a.5.5 0 0 0 0-1h-11zm0 3a.5.5 0 0 0 0 1h8a.5.5 0 0 0 0-1h-8zm0 3a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5z"/></svg>
+        </div>
+        <h2>Text Module</h2>
+      </div>
+
+      <p>The Text module provides five creative writing and prompt engineering modes, selectable from <strong>Section 01 — Workspace Mode</strong> in the left panel.</p>
+
+      <div class="mode-grid">
+        <div class="mode-card" id="text-editor">
+          <div class="mode-card-name">Text Editor</div>
+          <div class="mode-card-desc">General-purpose freeform AI text generation with system instructions</div>
+        </div>
+        <div class="mode-card" id="prompt-builder">
+          <div class="mode-card-name">Prompt Builder</div>
+          <div class="mode-card-desc">Structured prompt engineering with parameter slots, auto-assembled</div>
+        </div>
+        <div class="mode-card">
+          <div class="mode-card-name">Photo Studio</div>
+          <div class="mode-card-desc">Upload image → visual analysis and prompt variations</div>
+        </div>
+        <div class="mode-card" id="cinematic-writer">
+          <div class="mode-card-name">Cinematic Writer</div>
+          <div class="mode-card-desc">Multi-step pipeline: concept → script → shot list → video prompts</div>
+        </div>
+        <div class="mode-card" id="lyric-writer">
+          <div class="mode-card-name">Lyric Writer</div>
+          <div class="mode-card-desc">Genre, mood, and theme-driven song lyric generation</div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Text Editor</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Write your Prompt</strong><p>Type your prompt in the Prompt field.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Add System Instructions (optional)</strong><p>Define AI behaviour — role, tone, format. Optionally attach an image or video as context.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Select a Model</strong><p>Gemini 3 Flash (fast) or Gemini 3 Pro (quality).</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Adjust Parameters</strong><p>Set Temperature (0 = focused → 2 = creative) and Max Tokens.</p></div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-content"><strong>Generate</strong><p>Click Generate to run.</p></div></div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Cinematic Writer</h3>
+        <p>A guided, multi-step pipeline for film production packages. Use the <strong>→ Next Step</strong> button to advance through each stage.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Step</th><th>What happens</th></tr></thead>
+            <tbody>
+              <tr><td><strong>1 — Concept</strong></td><td>Enter your story concept and choose a cinematic style</td></tr>
+              <tr><td><strong>2 — Script</strong></td><td>AI generates a full script; review and edit</td></tr>
+              <tr><td><strong>3 — Shot List</strong></td><td>AI breaks the script into individual shots</td></tr>
+              <tr><td><strong>4 — Video Prompts</strong></td><td>Each shot is converted into a ready-to-use video generation prompt</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Models</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Model</th><th>Speed</th><th>Quality</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Gemini 3 Flash</strong></td><td>Fast</td><td>Good</td></tr>
+              <tr><td><strong>Gemini 3 Pro</strong></td><td>Slower</td><td>Best</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Language support: English (US/UK), French, German, Spanish, Japanese, and Chinese.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>System Presets</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Preset</th><th>Mode</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Blog Post Outline</strong></td><td>Text Editor</td><td>SEO-structured outline with headings and keyword suggestions</td></tr>
+              <tr><td><strong>SEO Meta Description</strong></td><td>Text Editor</td><td>Compelling 150–160 character meta descriptions</td></tr>
+              <tr><td><strong>Cold Sales Email</strong></td><td>Text Editor</td><td>High-conversion cold outreach under 150 words</td></tr>
+              <tr><td><strong>Creative Brainstorming</strong></td><td>Text Editor</td><td>10 original, out-of-the-box ideas</td></tr>
+              <tr><td><strong>Pop Song Lyrics</strong></td><td>Lyric Writer</td><td>Upbeat pop with catchy hook</td></tr>
+              <tr><td><strong>Emotional Ballad</strong></td><td>Lyric Writer</td><td>Melancholic ballad with slow build</td></tr>
+              <tr><td><strong>Cinematic Script</strong></td><td>Cinematic Writer</td><td>Full production package</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- IMAGE MODULE -->
+    <div class="doc-section" id="image">
+      <div class="section-header">
+        <div class="section-num">04</div>
+        <div class="section-icon">
+          <svg viewBox="0 0 16 16"><path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/><path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/></svg>
+        </div>
+        <h2>Image Module</h2>
+      </div>
+
+      <p>The Image module has three workspaces accessible via the tab bar beneath the module header.</p>
+
+      <div class="subsection" id="gen-studio">
+        <h3>4.1 Generation Studio</h3>
+        <p>Create images from structured parameters across five creative categories: <strong>Cinematic</strong>, <strong>Architecture</strong>, <strong>Art</strong>, <strong>Logo</strong>, and <strong>Tech</strong>. Click any field's selector button to open the <strong>Visual Selector</strong> — a searchable thumbnail grid.</p>
+
+        <h4>Output Settings</h4>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Setting</th><th>Options</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Model</strong></td><td>Nano Banana Pro · Nano Banana 2 · Seedream 5.0</td></tr>
+              <tr><td><strong>Aspect Ratio</strong></td><td>21:9, 16:9, 4:3, 3:2, 1:1, 9:16, 3:4, 2:3, 5:4, 4:5</td></tr>
+              <tr><td><strong>Resolution</strong></td><td>Standard (HD) · High Res (2K) · Ultra (4K)</td></tr>
+              <tr><td><strong>Batch Size</strong></td><td>1 – 4 images</td></tr>
+              <tr><td><strong>Seed</strong></td><td>Fixed integer for reproducible outputs</td></tr>
+              <tr><td><strong>Negative Prompt</strong></td><td>Describe what to exclude from the output</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h4>Reference Uploads</h4>
+        <p>Up to <strong>4 characters</strong> can be defined, each with multiple upload slots. <strong>Stitch Mode</strong> lets you composite up to 4 sub-images into a single reference panel per slot.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Slot</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Character Face</strong></td><td>Face reference for consistent identity</td></tr>
+              <tr><td><strong>Character Outfit</strong></td><td>Clothing and style reference</td></tr>
+              <tr><td><strong>Character Object</strong></td><td>Prop or held item reference</td></tr>
+              <tr><td><strong>Scene Reference</strong></td><td>Background or environment reference</td></tr>
+              <tr><td><strong>Global Reference / Sketch</strong></td><td>Overall composition or rough sketch</td></tr>
+              <tr><td><strong>Texture / Pattern</strong></td><td>Surface material reference</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="subsection" id="virtual-tryon">
+        <h3>4.2 Virtual Try-On</h3>
+        <p>Dress a person photo in a garment photo using AI.</p>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Upload a Person Photo</strong><p>Full or ¾ body works best.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Upload a Garment Photo</strong><p>Flat-lay or model shots both work.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Set a Style</strong><p>Casual, Formal, Sportswear, or Streetwear.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Generate</strong><p>After generating, use Pose Variation controls to request front, back, left, or right viewing angles without re-uploading.</p></div></div>
+        </div>
+      </div>
+
+      <div class="subsection" id="inpaint">
+        <h3>4.3 Editor (Inpaint)</h3>
+        <p>Edit specific areas of an existing image using a text instruction.</p>
+        <div class="callout callout-info">
+          <div class="callout-icon">ℹ</div>
+          <div class="callout-body">A <strong>Mask Image</strong> is optional — white pixels mark the area to edit, black pixels are preserved. If no mask is provided, the whole image is editable.</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Preset</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Seamless Removal</strong></td><td>Remove object, infer background</td></tr>
+              <tr><td><strong>Change Background</strong></td><td>Replace background, keep subject</td></tr>
+              <tr><td><strong>Add Element</strong></td><td>Insert a new object naturally</td></tr>
+              <tr><td><strong>Style Transfer</strong></td><td>Change style of a masked area</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIDEO MODULE -->
+    <div class="doc-section" id="video">
+      <div class="section-header">
+        <div class="section-num">05</div>
+        <div class="section-icon">
+          <svg viewBox="0 0 16 16"><path d="M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z"/></svg>
+        </div>
+        <h2>Video Module</h2>
+      </div>
+
+      <div class="mode-grid">
+        <div class="mode-card" id="text-to-video">
+          <div class="mode-card-name">Text to Video</div>
+          <div class="mode-card-desc">Generate video directly from a text prompt</div>
+        </div>
+        <div class="mode-card" id="image-to-video">
+          <div class="mode-card-name">Image to Video</div>
+          <div class="mode-card-desc">Animate a still image — Key Frame or Reference mode</div>
+        </div>
+        <div class="mode-card" id="video-to-video">
+          <div class="mode-card-name">Video to Video</div>
+          <div class="mode-card-desc">Edit or motion-transfer existing video</div>
+        </div>
+        <div class="mode-card" id="lip-sync">
+          <div class="mode-card-name">Audio to Video (Lip Sync)</div>
+          <div class="mode-card-desc">Animate a face to match an audio track</div>
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body"><strong>Tip for Text to Video:</strong> Be specific about camera movement (e.g., "slow dolly push-in"), lighting, subject action, and environment to get the best results.</div>
+      </div>
+
+      <div class="subsection">
+        <h3>Image to Video — Sub-modes</h3>
+        <p><strong>Key Frame Mode</strong> — Upload a start image, end image, or both. The AI animates the transition between them.</p>
+        <p><strong>Reference Mode</strong> — Upload up to 7 reference frames (<code>ref_1</code> through <code>ref_7</code>). The AI generates motion inspired by the visual content of all frames.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Lip Sync Steps</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Upload Source Media</strong><p>An image or video with a clear face.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Pick a Face</strong><p>The Face Picker detects faces and draws bounding boxes — click to select.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Upload Audio Track</strong><p>WAV or MP3 for each detected face.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Trim & Offset</strong><p>Use the Timeline to trim audio and set offsets per face track.</p></div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-content"><strong>Select Profile & Quality</strong><p>Normal or Pro profile; 720p or 1080p output quality.</p></div></div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Available Models</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Model</th><th>Provider</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Kling O1</strong></td><td>Kling AI</td></tr>
+              <tr><td><strong>Kling 3.0 / 3.0 Omni</strong></td><td>Kling AI</td></tr>
+              <tr><td><strong>Kling 2.6 / 2.1 / 1.6</strong></td><td>Kling AI</td></tr>
+              <tr><td><strong>Google Veo 3.1 / 3.1 Fast</strong></td><td>Google</td></tr>
+              <tr><td><strong>Seedance 1.5 Pro / Pro / Lite</strong></td><td>ByteDance</td></tr>
+              <tr><td><strong>Runway Gen4 Aleph</strong></td><td>Runway</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout callout-info">
+          <div class="callout-icon">ℹ</div>
+          <div class="callout-body">Each generation mode independently remembers its own model, aspect ratio, resolution, and duration settings — switching modes is lossless. Multiple video jobs can run simultaneously; the Generate button is never disabled by in-flight jobs.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUDIO MODULE -->
+    <div class="doc-section" id="audio">
+      <div class="section-header">
+        <div class="section-num">06</div>
+        <div class="section-icon">
+          <svg viewBox="0 0 16 16"><path d="M9 13c0 1.105-1.12 2-2.5 2S4 14.105 4 13s1.12-2 2.5-2 2.5.895 2.5 2z"/><path fill-rule="evenodd" d="M9 3v10H8V3h1z"/><path d="M8 2.82a1 1 0 0 1 .804-.98l3-.6A1 1 0 0 1 13 2.22V4L8 5V2.82z"/><path d="M13 13c0 1.105-1.12 2-2.5 2S8 14.105 8 13s1.12-2 2.5-2 2.5.895 2.5 2z"/></svg>
+        </div>
+        <h2>Audio Module</h2>
+      </div>
+
+      <p>The Audio module has two engines — switch between them in <strong>Section 01 — Workspace Mode</strong>.</p>
+
+      <div class="subsection" id="voice-engine">
+        <h3>6.1 Voice Engine</h3>
+        <p>Convert text to natural-sounding speech using three TTS providers.</p>
+
+        <h4>Available Voices</h4>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Voice</th><th>Character</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Kore</strong></td><td>Female, Calm</td></tr>
+              <tr><td><strong>Puck</strong></td><td>Male, Narrative</td></tr>
+              <tr><td><strong>Charon</strong></td><td>Male, Deep</td></tr>
+              <tr><td><strong>Fenrir</strong></td><td>Male, Intense</td></tr>
+              <tr><td><strong>Zephyr</strong></td><td>Female, Soft</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h4>Conversation Mode</h4>
+        <p>Simulate a two-speaker dialogue. Toggle to <strong>Conversation Mode</strong>, set names and voices for each speaker, then write the script prefixing each line with the speaker name (e.g., <code>Alice: Hello. Bob: Hi there.</code>).</p>
+      </div>
+
+      <div class="subsection" id="music-engine">
+        <h3>6.2 Music Engine</h3>
+        <p>Generate royalty-free AI music tracks. Set Genre, Mood, and Tempo, toggle Vocals, optionally upload a reference image/video for thematic inspiration, and select a model.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Model</th><th>Provider</th><th>Output</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Gemini TTS</strong></td><td>Google</td><td>Speech synthesis</td></tr>
+              <tr><td><strong>ElevenLabs v2</strong></td><td>ElevenLabs</td><td>Speech synthesis</td></tr>
+              <tr><td><strong>OpenAI TTS</strong></td><td>OpenAI</td><td>Speech synthesis</td></tr>
+              <tr><td><strong>Lyria Clip (30s)</strong></td><td>Google</td><td>Music clip</td></tr>
+              <tr><td><strong>Lyria Pro (Full)</strong></td><td>Google</td><td>Full music track</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- RENDER QUEUE -->
+    <div class="doc-section" id="render-queue">
+      <div class="section-header">
+        <div class="section-num">07</div>
+        <div class="section-icon">
+          <svg viewBox="0 0 16 16"><path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.27l.493-.87a8.025 8.025 0 0 1 .979.654l-.615.789a6.996 6.996 0 0 0-.418-.302zm1.834 1.79a6.99 6.99 0 0 0-.653-.796l.724-.69c.27.285.52.59.747.91l-.818.576zm.744 1.352a7.08 7.08 0 0 0-.214-.468l.893-.45a7.976 7.976 0 0 1 .45 1.088l-.95.313a7.023 7.023 0 0 0-.179-.483zm.53 2.507a6.991 6.991 0 0 0-.1-1.025l.985-.17c.067.386.106.778.116 1.17l-1 .025zm-.131 1.538c.033-.17.06-.339.081-.51l.993.123a7.957 7.957 0 0 1-.23 1.155l-.964-.267c.046-.165.086-.332.12-.501zm-.952 2.379c.184-.29.346-.594.486-.908l.914.405c-.16.36-.345.706-.555 1.038l-.845-.535zm-.964 1.205c.122-.122.239-.248.35-.378l.758.653a8.073 8.073 0 0 1-.401.432l-.707-.707z"/><path d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0v1z"/><path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/></svg>
+        </div>
+        <h2>Render Queue</h2>
+      </div>
+
+      <p>The Render Queue tracks every AI generation job across all modules. Open it by clicking the <strong>Queue</strong> button in any module's output header bar — the panel slides in from the right as an overlay.</p>
+
+      <div class="queue-states">
+        <div class="queue-card">
+          <div class="queue-card-indicator q-pending"></div>
+          <div class="queue-card-label">Pending</div>
+          <div class="queue-card-desc">Grey spinner</div>
+        </div>
+        <div class="queue-card">
+          <div class="queue-card-indicator q-processing"></div>
+          <div class="queue-card-label">Processing</div>
+          <div class="queue-card-desc">Blue progress bar</div>
+        </div>
+        <div class="queue-card">
+          <div class="queue-card-indicator q-done"></div>
+          <div class="queue-card-label">Completed</div>
+          <div class="queue-card-desc">Green check + preview</div>
+        </div>
+        <div class="queue-card">
+          <div class="queue-card-indicator q-failed"></div>
+          <div class="queue-card-label">Failed</div>
+          <div class="queue-card-desc">Red × + error message</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Action</th><th>How</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Preview</strong></td><td>Click the thumbnail to view the result</td></tr>
+            <tr><td><strong>Cancel</strong></td><td>Click × while a job is Processing to abort immediately</td></tr>
+            <tr><td><strong>Retry</strong></td><td>Click the retry icon on a Failed job to re-queue</td></tr>
+            <tr><td><strong>Remove</strong></td><td>Click the trash icon on any Completed or Failed job</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Each job card shows: type badge (Image / Video / Audio / Text), model name, prompt excerpt, aspect ratio, start time, and elapsed/total duration.</p>
+    </div>
+
+    <!-- GALLERY -->
+    <div class="doc-section" id="gallery">
+      <div class="section-header">
+        <div class="section-num">08</div>
+        <div class="section-icon">
+          <svg viewBox="0 0 16 16"><path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4V.5zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2zm-5-6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm.5 2.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1 0-1zm-3-2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm.5 2.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1 0-1zm-3-2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm.5 2.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1 0-1z"/></svg>
+        </div>
+        <h2>Gallery</h2>
+      </div>
+
+      <p>The Gallery stores all outputs generated within the current session. Open it from the <strong>Gallery</strong> button in any module's output header bar. Filter by type: <strong>All · Image · Video · Audio · Scene</strong>.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Action</th><th>How</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Download</strong></td><td>Click the download icon on any gallery item</td></tr>
+            <tr><td><strong>Remix</strong></td><td>Loads the item's settings back into the module</td></tr>
+            <tr><td><strong>Delete</strong></td><td>Click the trash icon to remove from gallery</td></tr>
+            <tr><td><strong>Open in Explorer</strong></td><td>Click the folder icon to reveal the file on disk</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-icon">⚠</div>
+        <div class="callout-body"><strong>Session cache is cleared after 48 hours.</strong> Save important outputs to the Gallery or a custom folder before then. Set a permanent save location in <strong>Settings → Gallery Location</strong>.</div>
+      </div>
+    </div>
+
+    <!-- PRESETS -->
+    <div class="doc-section" id="presets">
+      <div class="section-header">
+        <div class="section-num">09</div>
+        <div class="section-icon">
+          <svg viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"/></svg>
+        </div>
+        <h2>Presets</h2>
+      </div>
+
+      <p>Presets save and recall the full configuration of a module tab — inputs, aspect ratio, resolution, and advanced settings. The Presets panel has two tabs: <strong>System</strong> (built-in) and <strong>My Presets</strong> (your saved ones).</p>
+
+      <div class="subsection">
+        <h3>Saving a Preset</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Configure the module</strong><p>Set everything to your desired state.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Open Presets panel</strong><p>Click Presets in the output header bar, then <strong>Save Current as Preset</strong>.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Name and save</strong><p>Enter a name and optional description, then click Save.</p></div></div>
+        </div>
+      </div>
+
+      <p>User presets are stored as individual <code>.json</code> files in <code>Documents\Movie Planet Studio\Presets\{Module}\</code> — easy to back up, share, or transfer between installations.</p>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="doc-section" id="settings">
+      <div class="section-header">
+        <div class="section-num">10</div>
+        <div class="section-icon">
+          <svg viewBox="0 0 16 16"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.474l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/></svg>
+        </div>
+        <h2>Settings & API Keys</h2>
+      </div>
+
+      <p>Access Settings via the <strong>gear icon</strong> in any module's output header bar.</p>
+
+      <div class="subsection">
+        <h3>API Key Setup</h3>
+        <p>MP Studio uses the <strong>Google Gemini API</strong> for all AI generation.</p>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Get your key</strong><p>Go to <a href="https://aistudio.google.com" style="color:var(--amber)">Google AI Studio</a> to create a free API key.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Paste it in Settings</strong><p>Open Settings → Gemini API Key and paste your key.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Save</strong><p>The System Status Badge turns green when the key is accepted.</p></div></div>
+        </div>
+        <div class="callout callout-info">
+          <div class="callout-icon">🔒</div>
+          <div class="callout-body">Your API key is encrypted with AES-256-CBC and stored locally at <code>%APPDATA%\Movie Planet Studio\Settings\config.json</code>. The key never leaves your machine unencrypted.</div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>System Status Badge</h3>
+        <div class="status-grid">
+          <div class="status-card">
+            <div class="status-card-icon">🟢</div>
+            <div class="status-card-label"><span class="badge badge-green"><span class="badge-dot"></span>Ready</span></div>
+            <div class="status-card-desc">API key set, no active jobs</div>
+          </div>
+          <div class="status-card">
+            <div class="status-card-icon">🔵</div>
+            <div class="status-card-label"><span class="badge badge-blue"><span class="badge-dot"></span>Generating</span></div>
+            <div class="status-card-desc">One or more jobs running</div>
+          </div>
+          <div class="status-card">
+            <div class="status-card-icon">🔴</div>
+            <div class="status-card-label"><span class="badge badge-red"><span class="badge-dot"></span>Error</span></div>
+            <div class="status-card-desc">API key missing or server issue</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHORTCUTS -->
+    <div class="doc-section" id="shortcuts">
+      <div class="section-header">
+        <div class="section-num">11</div>
+        <div class="section-icon">
+          <svg viewBox="0 0 16 16"><path d="M14 5a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h12zM2 4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H2z"/><path d="M13 10.25a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm0-2a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm-5 0A.25.25 0 0 1 8.25 8h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 8 8.75v-.5zm2 0a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm2 0a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm-6 2A.25.25 0 0 1 6.25 10h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm2 0a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm2 0a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm2 0a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm-6-4a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm2 0a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm2 0a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm-4-2A.25.25 0 0 1 6.25 6h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 6 6.75v-.5zm2 0a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 8 6.75v-.5zm2 0a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm-6 0a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm-2 0A.25.25 0 0 1 2.25 6h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 2 6.75v-.5z"/></svg>
+        </div>
+        <h2>Keyboard Shortcuts</h2>
+      </div>
+
+      <div class="shortcut-grid">
+        <div class="shortcut-row">
+          <span class="shortcut-label">New Project</span>
+          <span><kbd>Ctrl</kbd>+<kbd>N</kbd></span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-label">Open Project</span>
+          <span><kbd>Ctrl</kbd>+<kbd>O</kbd></span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-label">Save Project</span>
+          <span><kbd>Ctrl</kbd>+<kbd>S</kbd></span>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-label">Save Project As</span>
+          <span><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILE PATHS -->
+    <div class="doc-section" id="file-paths">
+      <div class="section-header">
+        <div class="section-num">12</div>
+        <div class="section-icon">
+          <svg viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v7a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>
+        </div>
+        <h2>File Storage & Paths</h2>
+      </div>
+
+      <div class="path-list">
+        <div class="path-row">
+          <span class="path-row-label">Project files (.mps)</span>
+          <span class="path-row-val">Documents\Movie Planet Studio\Projects\</span>
+        </div>
+        <div class="path-row">
+          <span class="path-row-label">User presets</span>
+          <span class="path-row-val">Documents\Movie Planet Studio\Presets\{Module}\</span>
+        </div>
+        <div class="path-row">
+          <span class="path-row-label">Session cache</span>
+          <span class="path-row-val">%LOCALAPPDATA%\Movie Planet Studio\Cache\{session}\</span>
+        </div>
+        <div class="path-row">
+          <span class="path-row-label">Settings & API key</span>
+          <span class="path-row-val">%APPDATA%\Movie Planet Studio\Settings\config.json</span>
+        </div>
+        <div class="path-row">
+          <span class="path-row-label">Application logs</span>
+          <span class="path-row-val">%APPDATA%\Movie Planet Studio\logs\</span>
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-icon">⚠</div>
+        <div class="callout-body"><strong>Session cache is automatically cleaned up after 48 hours.</strong> Save important outputs to the Gallery or a custom folder before then.</div>
+      </div>
+    </div>
+
+    <!-- TROUBLESHOOTING -->
+    <div class="doc-section" id="troubleshooting">
+      <div class="section-header">
+        <div class="section-num">13</div>
+        <div class="section-icon">
+          <svg viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/></svg>
+        </div>
+        <h2>Troubleshooting</h2>
+      </div>
+
+      <div id="trouble-list">
+        <div class="trouble-item">
+          <div class="trouble-q" onclick="toggleTrouble(this)">
+            <span>The app shows a server error on startup</span>
+            <span class="arrow">▶</span>
+          </div>
+          <div class="trouble-a">
+            The internal Express server failed to start. Try:
+            <ol>
+              <li>Relaunch the application.</li>
+              <li>Check if another process is using ports 3000–3099.</li>
+              <li>Check logs at <code>%APPDATA%\Movie Planet Studio\logs\</code>.</li>
+            </ol>
+          </div>
+        </div>
+        <div class="trouble-item">
+          <div class="trouble-q" onclick="toggleTrouble(this)">
+            <span>Generation fails with "API key not set"</span>
+            <span class="arrow">▶</span>
+          </div>
+          <div class="trouble-a">
+            Open Settings and re-enter your Gemini API key. Ensure the key has the required API permissions enabled in Google AI Studio.
+          </div>
+        </div>
+        <div class="trouble-item">
+          <div class="trouble-q" onclick="toggleTrouble(this)">
+            <span>Generation fails with "Rate limit exceeded"</span>
+            <span class="arrow">▶</span>
+          </div>
+          <div class="trouble-a">
+            Your Gemini API key has hit its request quota. Wait a moment and try again, or check your quota in Google AI Studio.
+          </div>
+        </div>
+        <div class="trouble-item">
+          <div class="trouble-q" onclick="toggleTrouble(this)">
+            <span>A project won't open</span>
+            <span class="arrow">▶</span>
+          </div>
+          <div class="trouble-a">
+            Ensure the <code>.mps</code> file is not corrupted (it is a ZIP archive — verify with any ZIP tool). Check the file is under 500 MB. The file may reference a path that no longer exists; assets are embedded, so this is rare.
+          </div>
+        </div>
+        <div class="trouble-item">
+          <div class="trouble-q" onclick="toggleTrouble(this)">
+            <span>Generated images are not saving</span>
+            <span class="arrow">▶</span>
+          </div>
+          <div class="trouble-a">
+            Check that your <strong>Gallery Location</strong> folder exists and the app has write access. If using the default session cache, ensure <code>%LOCALAPPDATA%</code> is not restricted.
+          </div>
+        </div>
+        <div class="trouble-item">
+          <div class="trouble-q" onclick="toggleTrouble(this)">
+            <span>Video jobs stay "Pending" indefinitely</span>
+            <span class="arrow">▶</span>
+          </div>
+          <div class="trouble-a">
+            Verify your API key supports the video model you selected. Check the Render Queue for an error message on the job card. Some video models (e.g., Veo) have longer generation times — allow up to 5 minutes.
+          </div>
+        </div>
+        <div class="trouble-item">
+          <div class="trouble-q" onclick="toggleTrouble(this)">
+            <span>Audio playback is silent</span>
+            <span class="arrow">▶</span>
+          </div>
+          <div class="trouble-a">
+            Check your system volume and default audio output device. Try downloading the file and playing it in a media player to rule out an in-app audio issue.
+          </div>
+        </div>
+        <div class="trouble-item">
+          <div class="trouble-q" onclick="toggleTrouble(this)">
+            <span>The app feels sluggish after long sessions</span>
+            <span class="arrow">▶</span>
+          </div>
+          <div class="trouble-a">
+            Open the Render Queue and remove completed jobs. Restart the application to clear the session cache from memory.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <div class="footer-logo">Movie Planet Studio</div>
+      <div class="footer-meta">v1.0 · Windows Desktop · From Nothing to Cinema.</div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<script>
+  // Accordion
+  function toggleTrouble(el) {
+    const answer = el.nextElementSibling;
+    const isOpen = answer.classList.contains('open');
+    document.querySelectorAll('.trouble-q').forEach(q => {
+      q.classList.remove('open');
+      q.nextElementSibling.classList.remove('open');
+    });
+    if (!isOpen) {
+      el.classList.add('open');
+      answer.classList.add('open');
+    }
+  }
+
+  // Active nav on scroll
+  const sections = document.querySelectorAll('.doc-section, .hero');
+  const navItems = document.querySelectorAll('.nav-item');
+  const breadcrumb = document.getElementById('active-section');
+
+  const sectionMap = {
+    'getting-started': 'Getting Started',
+    'projects': 'Projects',
+    'text': 'Text Module',
+    'image': 'Image Module',
+    'video': 'Video Module',
+    'audio': 'Audio Module',
+    'render-queue': 'Render Queue',
+    'gallery': 'Gallery',
+    'presets': 'Presets',
+    'settings': 'Settings & API Keys',
+    'shortcuts': 'Keyboard Shortcuts',
+    'file-paths': 'File Storage & Paths',
+    'troubleshooting': 'Troubleshooting'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navItems.forEach(item => {
+          item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+        });
+        if (sectionMap[id]) breadcrumb.textContent = sectionMap[id];
+      }
+    });
+  }, { rootMargin: '-10% 0px -80% 0px' });
+
+  document.querySelectorAll('[id]').forEach(el => observer.observe(el));
+
+  // Search
+  const searchInput = document.getElementById('search-input');
+  searchInput.addEventListener('input', function() {
+    const q = this.value.toLowerCase().trim();
+    if (!q) {
+      document.querySelectorAll('.doc-section, .hero').forEach(s => s.classList.remove('hidden'));
+      document.querySelectorAll('.subsection').forEach(s => s.classList.remove('hidden'));
+      return;
+    }
+    document.querySelectorAll('.doc-section').forEach(sec => {
+      const text = sec.textContent.toLowerCase();
+      sec.classList.toggle('hidden', !text.includes(q));
+    });
+  });
+</script>
+</body>
+</html>
